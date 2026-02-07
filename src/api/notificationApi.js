@@ -33,3 +33,12 @@ export async function markAsRead(id) {
     const response = await apiClient.patch(`/notifications/${id}`);
     return response.data;
 }
+
+/**
+ * Get unread notification count
+ * GET /api/v1/notifications/count
+ */
+export async function getNotificationCount() {
+    const response = await apiClient.get('/notifications/count');
+    return response.data;
+}
