@@ -1,1 +1,0 @@
-import{a as s}from"./index-B_7VeGgU.js";async function a(){return(await s.get("/orders")).data}async function n(e){return(await s.get(`/orders/${e}/details`)).data}async function o(e){return(await s.post("/orders",e)).data}export{a,o as c,n as g};

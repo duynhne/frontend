@@ -1,1 +1,0 @@
-import{j as t}from"./index-B_7VeGgU.js";function i({message:e="No items found",icon:r="📦"}){return t.jsxs("div",{className:"empty-box",children:[t.jsx("div",{style:{fontSize:"3rem",marginBottom:"1rem"},children:r}),t.jsx("p",{children:e})]})}export{i as E};
