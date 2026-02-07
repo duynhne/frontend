@@ -2,6 +2,7 @@ import { useState, useEffect, lazy, Suspense } from 'react';
 import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
 import { getCartCount } from './api/cartApi';
+import { getNotificationCount } from './api/notificationApi';
 import Footer from './components/common/Footer';
 import { GridSkeleton } from './components/common/Skeleton';
 
@@ -18,7 +19,7 @@ const LoginPage = lazy(() => import('./pages/LoginPage/LoginPage'));
 /**
  * App Component
  * Proper layout: Header → Main (flex:1) → Footer
- * Uses GET /api/v1/cart/count for badge with SWR for smart revalidation
+ * Uses GET /api/v1/cart/count and /api/v1/notifications/count for badges with SWR
  */
 function App() {
     const navigate = useNavigate();
@@ -37,7 +38,20 @@ function App() {
         }
     );
 
+    // SWR for notification count - same pattern as cart
+    const { data: notificationData } = useSWR(
+        isAuthenticated ? 'notification-count' : null,
+        getNotificationCount,
+        {
+            refreshInterval: 30000, // Poll every 30s (less frequent than cart)
+            revalidateOnFocus: true,
+            revalidateOnReconnect: true,
+            dedupingInterval: 5000,
+        }
+    );
+
     const cartCount = cartData?.count || 0;
+    const notificationCount = notificationData?.count || 0;
 
     const checkAuth = () => {
         const token = localStorage.getItem('authToken');
@@ -74,7 +88,9 @@ function App() {
                     {isAuthenticated && (
                         <>
                             <Link to="/orders">Orders</Link>
-                            <Link to="/notifications">Notifications</Link>
+                            <Link to="/notifications">
+                                Notifications {notificationCount > 0 && <span className="notification-badge">{notificationCount}</span>}
+                            </Link>
                             <Link to="/profile">Profile</Link>
                             <Link to="/cart">
                                 Cart {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}

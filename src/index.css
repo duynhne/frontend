@@ -91,6 +91,14 @@ a:hover {
   margin-left: 3px;
 }
 
+.notification-badge {
+  background: var(--accent);
+  color: #fff;
+  padding: 1px 6px;
+  font-size: 0.6875rem;
+  margin-left: 3px;
+}
+
 /* Footer */
 .app-footer {
   text-align: center;
