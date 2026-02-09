@@ -16,8 +16,8 @@ export async function getCart() {
 /**
  * GET /api/v1/cart/count - Get cart item count (for badge)
  */
-export async function getCartCount() {
-    const response = await apiClient.get('/cart/count');
+export async function getCartCount(config = {}) {
+    const response = await apiClient.get('/cart/count', config);
     return response.data;
 }
 

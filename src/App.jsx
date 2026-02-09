@@ -29,7 +29,7 @@ function App() {
     // Only fetches when authenticated, revalidates on focus/reconnect
     const { data: cartData } = useSWR(
         isAuthenticated ? 'cart-count' : null, // Only fetch when authenticated
-        getCartCount,
+        () => getCartCount({ skipAuthRefresh: true }),
         {
             refreshInterval: 10000, // Poll every 10s (reduced from 5s)
             revalidateOnFocus: true, // Refresh when user returns to tab
@@ -41,7 +41,7 @@ function App() {
     // SWR for notification count - same pattern as cart
     const { data: notificationData } = useSWR(
         isAuthenticated ? 'notification-count' : null,
-        getNotificationCount,
+        () => getNotificationCount({ skipAuthRefresh: true }),
         {
             refreshInterval: 30000, // Poll every 30s (less frequent than cart)
             revalidateOnFocus: true,
