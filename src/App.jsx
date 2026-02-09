@@ -91,14 +91,14 @@ function App() {
                 <nav>
                     {isAuthenticated && (
                         <>
+                            <Link to="/cart">
+                                Cart {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+                            </Link>
                             <Link to="/orders">Orders</Link>
                             <Link to="/notifications">
                                 Notifications {notificationCount > 0 && <span className="notification-badge">{notificationCount}</span>}
                             </Link>
                             <Link to="/profile">Profile</Link>
-                            <Link to="/cart">
-                                Cart {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
-                            </Link>
                         </>
                     )}
                     {isAuthenticated ? (
