@@ -16,11 +16,11 @@ export default function LoginPage() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const { notify } = useToast();
-    
+
     // Read query params
     const returnTo = searchParams.get('returnTo') || '/';
     const initialMode = searchParams.get('mode') || 'login';
-    
+
     const [mode, setMode] = useState(initialMode);
     const [loading, setLoading] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -36,7 +36,7 @@ export default function LoginPage() {
         const token = localStorage.getItem('authToken');
         setIsAuthenticated(!!token);
     }, []);
-    
+
     // Update mode when query param changes
     useEffect(() => {
         if (initialMode === 'login' || initialMode === 'register') {
@@ -48,7 +48,8 @@ export default function LoginPage() {
         localStorage.removeItem('authToken');
         localStorage.removeItem('authUser');
         setIsAuthenticated(false);
-        // Dispatch storage event so App.jsx updates header immediately
+        // Dispatch custom event for same-tab updates
+        window.dispatchEvent(new Event('auth-change'));
         window.dispatchEvent(new Event('storage'));
     };
 
@@ -72,10 +73,13 @@ export default function LoginPage() {
 
             if (result.token) {
                 localStorage.setItem('authToken', result.token);
-                // Dispatch storage event so App.jsx updates header immediately
+                localStorage.setItem('authToken', result.token);
+                // Dispatch custom event for same-tab updates
+                window.dispatchEvent(new Event('auth-change'));
+                // Dispatch storage event for cross-tab updates
                 window.dispatchEvent(new Event('storage'));
             }
-            
+
             // Persist user info for review submissions etc.
             if (result.user) {
                 localStorage.setItem('authUser', JSON.stringify(result.user));

@@ -70,8 +70,12 @@ function App() {
         // Listen for storage changes (e.g., login/logout in other tabs or from LoginPage)
         const handleStorage = () => checkAuth();
         window.addEventListener('storage', handleStorage);
+        // Listen for custom auth-change event (same tab)
+        window.addEventListener('auth-change', handleStorage);
+
         return () => {
             window.removeEventListener('storage', handleStorage);
+            window.removeEventListener('auth-change', handleStorage);
         };
     }, []);
 

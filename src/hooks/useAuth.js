@@ -45,7 +45,12 @@ export function useAuth() {
         };
 
         window.addEventListener('storage', handleStorage);
-        return () => window.removeEventListener('storage', handleStorage);
+        window.addEventListener('auth-change', handleStorage);
+
+        return () => {
+            window.removeEventListener('storage', handleStorage);
+            window.removeEventListener('auth-change', handleStorage);
+        };
     }, []);
 
     // Logout function
