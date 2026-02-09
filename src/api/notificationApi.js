@@ -38,7 +38,7 @@ export async function markAsRead(id) {
  * Get unread notification count
  * GET /api/v1/notifications/count
  */
-export async function getNotificationCount() {
-    const response = await apiClient.get('/notifications/count');
+export async function getNotificationCount(config = {}) {
+    const response = await apiClient.get('/notifications/count', config);
     return response.data;
 }
