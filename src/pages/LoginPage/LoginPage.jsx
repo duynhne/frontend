@@ -73,7 +73,6 @@ export default function LoginPage() {
 
             if (result.token) {
                 localStorage.setItem('authToken', result.token);
-                localStorage.setItem('authToken', result.token);
                 // Dispatch custom event for same-tab updates
                 window.dispatchEvent(new Event('auth-change'));
                 // Dispatch storage event for cross-tab updates
