@@ -33,9 +33,15 @@ apiClient.interceptors.response.use(
     (error) => {
         if (error.response) {
             // Handle 401 - Redirect to login
-            if (error.response.status === 401) {
-                localStorage.removeItem('authToken');
-                window.location.href = '/login';
+            // Skip redirect if skipAuthRefresh is set in request config
+            if (error.response.status === 401 && !error.config.skipAuthRefresh) {
+                // Prevent redirect loop if already on login page
+                if (!window.location.pathname.includes('/login')) {
+                    localStorage.removeItem('authToken');
+                    window.dispatchEvent(new Event('auth-change'));
+                    window.dispatchEvent(new Event('storage'));
+                    window.location.href = '/login';
+                }
             }
 
             // Extract error message from response
