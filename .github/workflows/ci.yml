@@ -8,36 +8,71 @@ on:
 
 permissions:
   contents: read
-  actions: read
   packages: write
   id-token: write
+  actions: read
+  security-events: write
 
 jobs:
+  # 1. Lint & Build
   lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Lint
         run: npm run lint
-      
+
       - name: Build
         run: npm run build
 
-  docker:
+  # 2. Docker Build & Push (Main Only)
+  docker-build:
     needs: lint
     if: github.ref == 'refs/heads/main'
-    uses: duyhenryer/shared-workflows/.github/workflows/docker-build.yml@main
+    uses: duyhenryer/shared-workflows/.github/workflows/docker-build-node.yml@main
     with:
       image-name: 'frontend'
       push: true
     secrets: inherit
+    permissions:
+      contents: read
+      packages: write
+      actions: read
+
+  # 3. Trivy Vulnerability Scan
+  trivy-scan:
+    needs: [docker-build]
+    uses: duyhenryer/shared-workflows/.github/workflows/trivy-scan.yml@main
+    with:
+      image-ref: ghcr.io/${{ github.repository }}/frontend@${{ needs.docker-build.outputs.digest }}
+      severity: 'CRITICAL,HIGH'
+      exit-code: '1'
+      ignore-unfixed: true
+    secrets: inherit
+    permissions:
+      contents: read
+      packages: read
+      security-events: write
+
+  # 4. Cosign Signing (only after scan passes)
+  docker-sign:
+    needs: [docker-build, trivy-scan]
+    uses: duyhenryer/shared-workflows/.github/workflows/docker-sign.yml@main
+    with:
+      tags: ${{ needs.docker-build.outputs.tags }}
+      digest: ${{ needs.docker-build.outputs.digest }}
+    secrets: inherit
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
