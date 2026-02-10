@@ -9,12 +9,22 @@ on:
 permissions:
   contents: read
   packages: write
+  pull-requests: read
   id-token: write
   actions: read
   security-events: write
 
 jobs:
-  # 1. Lint & Build
+  # 1. PR Checks (Branch Name + Slack "PR Opened")
+  pr-checks:
+    if: github.event_name == 'pull_request'
+    uses: duyhenryer/shared-workflows/.github/workflows/pr-checks.yml@main
+    with:
+      slack_channel_id: "C0AD82A9A74"
+    secrets:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+  # 2. Lint & Build
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -81,10 +91,11 @@ jobs:
   # 5. Final Status Notification + Google Sheets Reporting
   notify:
     if: always()
-    needs: [lint, docker-build, trivy-scan, docker-sign]
+    needs: [pr-checks, lint, docker-build, trivy-scan, docker-sign]
     uses: duyhenryer/shared-workflows/.github/workflows/status.yml@main
     with:
       slack_channel_id: "C0AD82A9A74"
+      slack_thread_ts: ${{ needs.pr-checks.outputs.slack_thread_ts }}
       gsheet_spreadsheet_id: "1F2VUrAOyMGnETApp5yA-ldCW81ConiQXnWYZVxKas_0"
     secrets:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
