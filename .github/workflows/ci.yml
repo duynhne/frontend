@@ -43,6 +43,7 @@ jobs:
     with:
       image-name: 'frontend'
       push: true
+      sbom: true
     secrets: inherit
     permissions:
       contents: read
@@ -76,3 +77,16 @@ jobs:
       contents: read
       packages: write
       id-token: write
+
+  # 5. Final Status Notification + Google Sheets Reporting
+  notify:
+    if: always()
+    needs: [lint, docker-build, trivy-scan, docker-sign]
+    uses: duyhenryer/shared-workflows/.github/workflows/status.yml@main
+    with:
+      slack_channel_id: "C0AD82A9A74"
+      gsheet_spreadsheet_id: "1F2VUrAOyMGnETApp5yA-ldCW81ConiQXnWYZVxKas_0"
+    secrets:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
+      GSHEET_PRIVATE_KEY: ${{ secrets.GSHEET_PRIVATE_KEY }}
