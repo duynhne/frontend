@@ -8,6 +8,7 @@ import { GridSkeleton } from './components/common/Skeleton';
 
 // Code splitting: Lazy load pages for better initial bundle size
 const HomePage = lazy(() => import('./pages/HomePage/HomePage'));
+const ProductListPage = lazy(() => import('./pages/ProductListPage/ProductListPage'));
 const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage/ProductDetailPage'));
 const CartPage = lazy(() => import('./pages/CartPage/CartPage'));
 const CheckoutPage = lazy(() => import('./pages/CheckoutPage/CheckoutPage'));
@@ -89,6 +90,7 @@ function App() {
                     </Link>
                 </h1>
                 <nav>
+                    <Link to="/products">Products</Link>
                     {isAuthenticated && (
                         <>
                             <Link to="/cart">
@@ -119,6 +121,7 @@ function App() {
                 <Suspense fallback={<GridSkeleton count={8} />}>
                     <Routes>
                         <Route path="/" element={<HomePage />} />
+                        <Route path="/products" element={<ProductListPage />} />
                         <Route path="/products/:id" element={<ProductDetailPage />} />
                         <Route path="/cart" element={<CartPage />} />
                         <Route path="/checkout" element={<CheckoutPage />} />
