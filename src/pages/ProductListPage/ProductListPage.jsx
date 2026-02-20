@@ -1,3 +1,4 @@
+import { useTransition } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ProductGrid from '../../components/domain/ProductGrid';
 import Pagination from '../../components/common/Pagination';
@@ -20,6 +21,7 @@ const PRODUCTS_PER_PAGE = 30;
  */
 export default function ProductListPage() {
     const [searchParams, setSearchParams] = useSearchParams();
+    const [isPending, startTransition] = useTransition();
 
     // Derive page number from URL during render (no useState needed)
     const page = Math.max(1, Number(searchParams.get('page')) || 1);
@@ -29,8 +31,11 @@ export default function ProductListPage() {
         limit: PRODUCTS_PER_PAGE,
     });
 
+    // rerender-transitions: wrap non-urgent update in startTransition
     const handlePageChange = (newPage) => {
-        setSearchParams({ page: String(newPage) });
+        startTransition(() => {
+            setSearchParams({ page: String(newPage) });
+        });
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
@@ -61,7 +66,9 @@ export default function ProductListPage() {
             {/* Success State */}
             {!loading && !error && products.length > 0 ? (
                 <>
-                    <ProductGrid products={products} />
+                    <div style={{ opacity: isPending ? 0.6 : 1, transition: 'opacity 0.2s' }}>
+                        <ProductGrid products={products} />
+                    </div>
                     <Pagination
                         currentPage={page}
                         totalPages={totalPages}

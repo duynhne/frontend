@@ -10,24 +10,26 @@
  */
 export default function Pagination({ currentPage, totalPages, onPageChange }) {
     return (
-        <div className="pagination">
+        <nav className="pagination" aria-label="Product pagination">
             <button
                 disabled={currentPage <= 1}
                 onClick={() => onPageChange(currentPage - 1)}
                 className="btn btn-secondary"
+                aria-label="Go to previous page"
             >
                 ← Previous
             </button>
-            <span className="pagination__info">
+            <span className="pagination__info" aria-current="page">
                 Page {currentPage} of {totalPages}
             </span>
             <button
                 disabled={currentPage >= totalPages}
                 onClick={() => onPageChange(currentPage + 1)}
                 className="btn btn-secondary"
+                aria-label="Go to next page"
             >
                 Next →
             </button>
-        </div>
+        </nav>
     );
 }
