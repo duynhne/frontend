@@ -1,5 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
-import { Routes, Route, Link, useNavigate } from 'react-router-dom';
+import { Routes, Route, Link, NavLink, useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
 import { getCartCount } from './api/cartApi';
 import { getNotificationCount } from './api/notificationApi';
@@ -90,17 +90,17 @@ function App() {
                     </Link>
                 </h1>
                 <nav>
-                    <Link to="/products">Products</Link>
+                    <NavLink to="/products">Products</NavLink>
                     {isAuthenticated && (
                         <>
-                            <Link to="/cart">
+                            <NavLink to="/cart">
                                 Cart {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
-                            </Link>
-                            <Link to="/orders">Orders</Link>
-                            <Link to="/notifications">
+                            </NavLink>
+                            <NavLink to="/orders">Orders</NavLink>
+                            <NavLink to="/notifications">
                                 Notifications {notificationCount > 0 && <span className="notification-badge">{notificationCount}</span>}
-                            </Link>
-                            <Link to="/profile">Profile</Link>
+                            </NavLink>
+                            <NavLink to="/profile">Profile</NavLink>
                         </>
                     )}
                     {isAuthenticated ? (
